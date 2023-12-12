@@ -186,6 +186,7 @@ function updateEvent(requestProject, event_id, empresa_id) {
       console.log("RESPONSE UPDATE PROYECTO", response);
     },
     error: function (error) {
+      console.log("ERROR UPDATE PROYECTO",error.responseText);
       console.log(error.responseText);
     }
   })
@@ -209,7 +210,8 @@ async function insertAddressAndAssignToProject(address, empresa_id, event_id) {
       console.log(response)
     },
     error: function (response) {
-      console.log(response.responseText);
+      console.log("ERROR insertAddressAndAssignToProject",error.responseText);
+      console.log(error.responseText);
     }
   });
 }
@@ -228,7 +230,8 @@ async function removeAddressFromEvent(event_id, empresa_id) {
       console.log(response)
     },
     error: function (response) {
-      console.log(response.responseText);
+      console.log("ERROR removeAddressFromEvent",error.responseText);
+      console.log(error.responseText);
     }
   });
 }
@@ -250,7 +253,8 @@ async function insertAndAssignSchedulesToEvent(event_id, empresa_id, schedules) 
       console.log(response)
     },
     error: function (response) {
-      console.log(response.responseText);
+      console.log("ERROR UinsertAndAssignSchedulesToEvent",error.responseText);
+      console.log(error.responseText);
     }
   });
 }
