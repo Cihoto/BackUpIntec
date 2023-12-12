@@ -187,9 +187,12 @@ $(document).ready(async function() {
     <?php if(isset($_GET['event_id'])):?>
         await getAllProjectData(EVENT_ID, EMPRESA_ID);
     <?php endif;?>
-    
 
-
+    projectDates.start_date = ""
+    projectDates.finish_date = ""
+    projectDates.total_days = ""
+    projectDates.selectDates = false
+    projectDates.project_id = ""
 })
 
 $('#status-button').on('click', function() {

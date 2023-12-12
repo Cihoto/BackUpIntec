@@ -2,7 +2,6 @@ let event_data = {
   address_id: "",
   client_id: "",
   event_id: ""
-
 }
 
 let requestProject = {
