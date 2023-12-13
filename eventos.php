@@ -6,6 +6,8 @@ $title = "Mis Eventos";
 <html lang="en">
 <?php
 require_once('./includes/head.php');
+
+
 ?>
 
 <body>
