@@ -182,10 +182,21 @@ function AddProduct(el) {
     }]
 
     const addProd = setSelectedProduct_AddNewProducts(prodsToAdd);
+    _searchProductValue = $('#tableProducts_filter').find('input[type="search"]').val();
+    let indexTab = $("#tableProducts").DataTable().page();
     printAllProductsOnTable();
     setCategoriesAndSubCategories();
     printAllSelectedProducts();
     setIngresos();
+
+    $('#tableProducts_filter').find('input[type="search"]').val(_searchProductValue);
+    // $("#tableProducts").DataTable().page(indexTab);
+
+    $("#tableProducts").DataTable().page(indexTab).draw(false)
+
+
+    isProdQuantitySelected = false
+    prodQuantityElementSelected = "";
 
     console.log(_selectedProducts)
 
@@ -332,41 +343,41 @@ $(document).on('blur', '.addProdInputResume', async function () {
       $(this).val(lastValue);
       return
     }
-    const totalToRemove = _selectedProducts.find((product)=>{
-      if(product.id === product_id){
-          return product.quantityToAdd
+    const totalToRemove = _selectedProducts.find((product) => {
+      if (product.id === product_id) {
+        return product.quantityToAdd
       }
     });
-    let totalOnPackages = 0; 
-    let packageTakenProducts = _selectedPackages.map((selectedPackage)=>{
-        const prodsPerPackage = selectedPackage.package_products.find((product)=>{
-            return  product.product_id === product_id
-        })
-        if(prodsPerPackage){
-            totalOnPackages += parseInt(prodsPerPackage.quantity);
-            return {
-                'package_name' : selectedPackage.package_name,
-                'products' : prodsPerPackage 
-            }
+    let totalOnPackages = 0;
+    let packageTakenProducts = _selectedPackages.map((selectedPackage) => {
+      const prodsPerPackage = selectedPackage.package_products.find((product) => {
+        return product.product_id === product_id
+      })
+      if (prodsPerPackage) {
+        totalOnPackages += parseInt(prodsPerPackage.quantity);
+        return {
+          'package_name': selectedPackage.package_name,
+          'products': prodsPerPackage
         }
-    }).filter((value)=>{return value !== undefined})
+      }
+    }).filter((value) => { return value !== undefined })
 
-    const totalToSubstract = parseInt(totalOnPackages) - parseInt(currentValue)  
+    const totalToSubstract = parseInt(totalOnPackages) - parseInt(currentValue)
 
-    if(parseInt(currentValue) < parseInt(totalOnPackages)){
+    if (parseInt(currentValue) < parseInt(totalOnPackages)) {
       $(this).val(totalToRemove.quantityToAdd);
       let trs = '';
-      packageTakenProducts.forEach((prod)=>{
-          trs+=`<tr>
+      packageTakenProducts.forEach((prod) => {
+        trs += `<tr>
               <td>${prod.package_name}</td>
               <td>${prod.products.quantity}</td>
           </tr>`
       });
 
       Swal.fire({
-          'icon':'warning',
-          'title':'Ups!',
-          'html':`<p>No se puede asignar ${currentValue} ${totalToRemove.nombre} ya que todos los equipos seleccionados pertenecen a un paquete</p>
+        'icon': 'warning',
+        'title': 'Ups!',
+        'html': `<p>No se puede asignar ${currentValue} ${totalToRemove.nombre} ya que todos los equipos seleccionados pertenecen a un paquete</p>
           <table class="table">
           <thead>
               <tr>
@@ -380,157 +391,97 @@ $(document).on('blur', '.addProdInputResume', async function () {
       </table>`
       })
       return
-  }
+    }
 
-  // SUMAR DIFERENCIA EN CASO DE QUE LOS SELECCIONADOS DE DISTINTOS ORIGENES(PACQUETES , SELECCION MANUAL PRODUCTOS RESERVADOS DESDE OTROS EVENTOS)
-  if(parseInt(currentValue) > parseInt(totalToRemove.quantityToAdd)){
-    let quantityToAdd = parseInt(currentValue) - parseInt(totalToRemove.quantityToAdd);
-    console.log("SUMANDO LA DIFERENCIA", quantityToAdd);
-    const productsToAdd = [{
-      'id' : totalToRemove.id,
-      'quantityToAdd' : quantityToAdd
-    }]
-    const removedProducts = setSelectedProduct_AddNewProducts(productsToAdd);
-    printAllProductsOnTable();
-    setCategoriesAndSubCategories();
-    printAllSelectedProducts();
-    setIngresos();
-    return;
-  }
+    // SUMAR DIFERENCIA EN CASO DE QUE LOS SELECCIONADOS DE DISTINTOS ORIGENES(PACQUETES , SELECCION MANUAL PRODUCTOS RESERVADOS DESDE OTROS EVENTOS)
+    if (parseInt(currentValue) > parseInt(totalToRemove.quantityToAdd)) {
+      let quantityToAdd = parseInt(currentValue) - parseInt(totalToRemove.quantityToAdd);
+      console.log("SUMANDO LA DIFERENCIA", quantityToAdd);
+      const productsToAdd = [{
+        'id': totalToRemove.id,
+        'quantityToAdd': quantityToAdd
+      }]
+      const removedProducts = setSelectedProduct_AddNewProducts(productsToAdd);
+      console.log("CATSANDSUBCATS", _categoriesandsubcategories);
+      console.log("selectedprods", _selectedProducts);
+      setCategoriesAndSubCategories();
+      printAllProductsOnTable();
+      printAllSelectedProducts();
+      setIngresos();
+      return;
+    }
 
-  if(parseInt(currentValue) < parseInt(totalToRemove.quantityToAdd)){
+    if (parseInt(currentValue) < parseInt(totalToRemove.quantityToAdd)){
 
-    let quantityToRemove = parseInt(totalToRemove.quantityToAdd) - parseInt(currentValue) ;
-    console.log("RESTAR LA DIFERENCIA", quantityToRemove);
-    const productsToRemove = [{
-      'id' : totalToRemove.id,
-      'quantity' : quantityToRemove
-    }]
-    const removedProducts = setSelectedProduct_RemoveProducts(productsToRemove);
-    printAllProductsOnTable();
-    setCategoriesAndSubCategories();
-    printAllSelectedProducts();
-    setIngresos();
-    return;
-  }
+      let quantityToRemove = parseInt(totalToRemove.quantityToAdd) - parseInt(currentValue);
+      console.log("RESTAR LA DIFERENCIA", quantityToRemove);
+      const productsToRemove = [{
+        'id': totalToRemove.id,
+        'quantity': quantityToRemove
+      }]
+      const removedProducts = setSelectedProduct_RemoveProducts(productsToRemove);
+      console.log("CATSANDSUBCATS", _categoriesandsubcategories);
+      console.log("selectedprods", _selectedProducts);
+      setCategoriesAndSubCategories();
+      printAllProductsOnTable();
+      printAllSelectedProducts();
+      setIngresos();
+      return;
+    }
+  }else{
 
+      console.log("CURRENTVALUE",currentValue);
+      console.log("CURRENTVALUE",currentValue);
+      console.log("CURRENTVALUE",currentValue);
+      console.log("CURRENTVALUE",currentValue);
+      console.log("CURRENTVALUE",currentValue);
+      console.log("CURRENTVALUE",currentValue);
+    if(parseInt(currentValue) > 0)  {
+      product_id
 
+      const prodToUpdate = _selectedProducts.find((prod)=>{
+        return prod.id === product_id;
+      });
+      if(prodToUpdate){
+        prodToUpdate.quantityToAdd = currentValue;
+      }
+      setCategoriesAndSubCategories();
+      printAllProductsOnTable();
+      printAllSelectedProducts();
+      setIngresos();
+      return;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //   const detailsPackage = await Promise.all(
-  //   selectedPackages.map(async (package) => {
-  //     return await GetPackageDetails(package.id);
-  //   }))
-
-  //   minProducts = detailsPackage.map((packageProds, index) => {
-  //     return packageProds.products[index, 0]
-  //   })
-
-  //   minProducts.forEach((prod) => {
-  //     if (prod.product_id === product_id) {
-  //       minvalue += parseInt(prod.quantity)
-  //     }
-  //   })
-  //   if (parseInt(currentValue) < minvalue) {
-  //     Swal.fire(
-  //       'Ups!',
-  //       `No puedes seleccionar menos de ${minvalue} de este equipo ya que pertenecen a un paquete estandard que ya seleccionaste`,
-  //       'error'
-  //     ).then(() => {
-  //       console.log($(this));
-  //       $(this).val(lastValue);
-  //     });
-
-
-
-  
-
-
-  //     return
-  //   } else {
-  //     const quantityAddStock = parseInt(lastValue) - parseInt(currentValue);
-  //     const productsToAdd = [{
-  //       'product_id': product_id,
-  //       'quantityToAdd': quantityAddStock
-  //     }];
-  //     // THIS FUNCTION MODIFY GLOBAL CONST listProductArray 
-  //     AddStockFromProducts(productsToAdd);
-  //     // THIS FUNCTION USE GLOBAL VARIABLE AND APPEND ARRAY ON TABLE PRODUCTS
-  //     fillProductsTableAssigments();
-  //     //FORMAT RESUME PRODUCT ARRAY
-  //     SetSelectedProducts_Add(productsToAdd);
-  //     // APPEND ALL PRODUCTS TO RESUME AND RESUME PROJECT TABLE
-  //     // addProductToResumeAssigment()
-  //     printAllMySelectedProds()
-  //   }
-  // } else {
-
-  //   const prodExists = selectedProducts.find((product) => {
-  //     return product.id === product_id
-  //   })
-  //   if (!prodExists) {
-  //     Swal.fire(
-  //       'Ups!',
-  //       'Ha ocurrido un error, por favor intenta nuevamente',
-  //       'error'
-  //     );
-  //     $(this).val(lastValue);
-  //     return
-  //   }
-
-  //   if (currentValue > 0) {
-
-  //     const productsToAdd = [{
-  //       'product_id': product_id,
-  //       'quantityToAdd': currentValue
-  //     }];
-  //     // THIS FUNCTION MODIFY GLOBAL CONST listProductArray 
-  //     AddStockFromProducts(productsToAdd);
-  //     // THIS FUNCTION USE GLOBAL VARIABLE AND APPEND ARRAY ON TABLE PRODUCTS
-  //     fillProductsTableAssigments();
-
-  //     //FORMAT RESUME PRODUCT ARRAY
-  //     SetSelectedProducts_Add(productsToAdd);
-
-  //     // APPEND ALL PRODUCTS TO RESUME AND RESUME PROJECT TABLE
-  //     addProductToResumeAssigment()
-  //   } else {
-  //     $(this).val(lastValue)
-  //   }
+    }else{
+      const prodToUpdate = _selectedProducts.find((prod)=>{
+        return prod.id === product_id;
+      });
+      if(prodToUpdate){
+        console.log("_selectedProducts.indexOf(prodToUpdate)",_selectedProducts.indexOf(prodToUpdate))
+        console.log("_selectedProducts.indexOf(prodToUpdate)",_selectedProducts.indexOf(prodToUpdate))
+        console.log("_selectedProducts.indexOf(prodToUpdate)",_selectedProducts.indexOf(prodToUpdate))
+        console.log("_selectedProducts.indexOf(prodToUpdate)",_selectedProducts.indexOf(prodToUpdate))
+        console.log("_selectedProducts.indexOf(prodToUpdate)",_selectedProducts.indexOf(prodToUpdate))
+        console.log("_selectedProducts.indexOf(prodToUpdate)",_selectedProducts.indexOf(prodToUpdate))
+        console.log("_selectedProducts.indexOf(prodToUpdate)",_selectedProducts.indexOf(prodToUpdate))
+        const indexof = _selectedProducts.indexOf(prodToUpdate); 
+        let newarray = _selectedProducts.splice(indexof,0);
+        
+              console.log("SELECTGEDPRODSSSSS",newarray);
+              console.log("SELECTGEDPRODSSSSS",newarray);
+              console.log("SELECTGEDPRODSSSSS",newarray);
+              console.log("SELECTGEDPRODSSSSS",newarray);
+              console.log("SELECTGEDPRODSSSSS",newarray);
+              console.log("SELECTGEDPRODSSSSS",newarray);
+              console.log("SELECTGEDPRODSSSSS",newarray);
+              console.log("SELECTGEDPRODSSSSS",newarray);
+              console.log("SELECTGEDPRODSSSSS",newarray);
+      }
+      setCategoriesAndSubCategories();
+      printAllProductsOnTable();
+      printAllSelectedProducts();
+      setIngresos();
+      return;
+    }
   }
 })
 
@@ -739,6 +690,7 @@ let _selectedProducts = [];
 let _categoriesandsubcategories = [];
 let _allMycats = [];
 let _allMySubCats = [];
+let _searchProductValue = "";
 
 // GET AND SET ALL PRODUCTS BY BUSSINESS
 // NO TAKEN PRODUCTS OR SELECTED PRODUCTS HAS BEEN DISCOUNT YET
@@ -762,7 +714,7 @@ async function GetAllMyProducts() {
 
 /*  SET DISCOUNT ON ALL PRODUCTS 
 GET ALL SELECTED AND TAKEN PRODUCTS AND DISCOUNT FROM */
-function setAllProducts_DiscountTakenProd(){
+function setAllProducts_DiscountTakenProd() {
   // RETURN STOCK FROM LAST TAKEN PRODS
   _lastTakenProducts.forEach((takenProd) => {
     const productoE = _productos.find((prod) => {
@@ -783,11 +735,11 @@ function setAllProducts_DiscountTakenProd(){
 
   // RETURN STOCK TO _SELECTEDPRODS
 
-  _selectedProducts.forEach((selectedProd)=>{
-    const prodExists = _productos.find((producto)=>{
+  _selectedProducts.forEach((selectedProd) => {
+    const prodExists = _productos.find((producto) => {
       return producto.id === selectedProd.id
     })
-    if(prodExists){
+    if (prodExists) {
       selectedProd.disponibles = prodExists.disponibles;
       selectedProd.faltantes = prodExists.faltantes;
     }
@@ -813,23 +765,23 @@ function setAllProducts_DiscountTakenProd(){
   });
 
   // DISCOUNT TAKEN PRODUCTS FROM _SELECTEDPRODUCTS
-  _selectedProducts.forEach((selectedProd)=>{
-    const prodExists = _productos.find((producto)=>{
+  _selectedProducts.forEach((selectedProd) => {
+    const prodExists = _productos.find((producto) => {
       return producto.id === selectedProd.id
     })
-    if(prodExists){
+    if (prodExists) {
       selectedProd.disponibles = prodExists.disponibles;
       selectedProd.faltantes = prodExists.faltantes;
     }
   });
-  
+
   _lastTakenProducts = _takenProducts;
 }
 
 
 // GET AND SET ALL TAKEN PRODS ON CHANGE EVENT
 // ON SELECTED DATE (PROJECT MODULE)
-async function setTakenProdsByRangeDate(){
+async function setTakenProdsByRangeDate() {
   const fecha_inicial = $('#fechaInicio').val();
   const fecha_termino = $('#fechaTermino').val();
   if (fecha_inicial === "" || fecha_termino === "") {
@@ -902,7 +854,7 @@ function setSelectedProduct_AddNewProducts(prodsToAdd) {
       prodIsSelected.disponibles = actualProdStatus.disponibles
     }
   })
-  console.log("SELECTED PRODS",_selectedProducts);
+  console.log("SELECTED PRODS", _selectedProducts);
   return true;
 }
 
@@ -910,7 +862,7 @@ function setSelectedProduct_AddNewProducts(prodsToAdd) {
 // GIVE FORMAT AND RETURN NEW JSON OBJECT THAT CONTAINS 
 // CATEGORIES AND SUBCATEGORIES BASED ON SELECTED PRODUCTS
 
-function setCategoriesAndSubCategories(){
+function setCategoriesAndSubCategories() {
   _categoriesandsubcategories = [];
 
   _allMycats = [];
@@ -959,10 +911,10 @@ function setCategoriesAndSubCategories(){
     }
   });
 
-  catAndSubcats.forEach((categoria)=>{
-    categoria.subcategorias = categoria.subcategorias.filter((subcategorias)=>{ return subcategorias !== undefined});
-    categoria.subcategorias.forEach((subcategoria)=>{
-      const productosFiltered = subcategoria.productos.filter((producto)=> { return producto !== undefined;})
+  catAndSubcats.forEach((categoria) => {
+    categoria.subcategorias = categoria.subcategorias.filter((subcategorias) => { return subcategorias !== undefined });
+    categoria.subcategorias.forEach((subcategoria) => {
+      const productosFiltered = subcategoria.productos.filter((producto) => { return producto !== undefined; })
       subcategoria.productos = productosFiltered;
     })
   })
@@ -978,14 +930,14 @@ function printAllProductsOnTable() {
       $(element).remove();
     })
   }
-  _productos.forEach((producto)=>{
+  _productos.forEach((producto) => {
     let td = `
         <td class="catProd"> ${producto.categoria}</td>
         <td class="itemProd"> ${producto.item}</td>
         <td style="width:25%" class="productName">${producto.nombre}</td>
         <td class="productStock" >${producto.cantidad}</td>
         <td class="productAvailable">${(producto.disponibles) < 0 ? 0 : producto.disponibles}</td>
-        <td><input style="margin-right:8px" class="addProdInput quantityToAdd" id="" type="number" min="1"/><i class="fa-solid fa-plus addItem" onclick="AddProduct(this)"></i></td>`
+        <td><input style="margin-right:8px" class="addProdInput quantityToAdd quantityProductInput" id="" type="number" min="1"/><i class="fa-solid fa-plus addItem" onclick="AddProduct(this)"></i></td>`
     $('#tableDrop').append(`<tr product_id="${producto.id}">${td}</tr>`);
   });
 
@@ -994,7 +946,7 @@ function printAllProductsOnTable() {
 
 
 
-function printAllSelectedProducts(){
+function printAllSelectedProducts() {
   $('#productResume-tables h3').remove();
   $('#productResume-tables table').remove();
   $('#filterSelectedProducts option').remove();
@@ -1084,9 +1036,66 @@ function printAllSelectedProducts(){
 }
 
 
-function setSelectedProduct_RemoveProducts(prodsToRemove){
+let currentProductRentValue = 0;
+$(document).on('click', '.product-price', async function () {
+  currentProductRentValue = ClpUnformatter($(this).val());
+  $(this).val("");
+})
 
-  console.log("ESTO ESTA INGRESANDO EN ESTA FUNCIOON",prodsToRemove)
+$(document).on('blur', '.product-price', async function () {
+
+  const newRentPrice = ClpUnformatter($(this).val());
+  if (newRentPrice === "" || newRentPrice === null || newRentPrice === undefined) {
+    $(this).val(CLPFormatter(parseInt(currentProductRentValue)))
+    return;
+  }
+
+  if (!isNumeric(newRentPrice)) {
+    Swal.fire(
+      'Ups!',
+      'ingrese un valor',
+      'warning'
+    );
+
+    $(this).val(CLPFormatter(parseInt(currentProductRentValue)));
+    return;
+  }
+  // GET PRODUCT ID FROM DOM 
+  const producto_id = $(this).closest('tr').attr('product_id');
+  // CHECK IF ATTR EXISTS ON PRODUCTS ARRAY
+  const prodExists = _productos.find((prod) => {
+    if (prod.id === producto_id) {
+      return true;
+    }
+  })
+  // RETURN IF ATTR IS MODIFICATED BY USER ON DOM
+  if (!prodExists) {
+    Swal.fire('Ups!', 'Ha ocurrido un error', 'error');
+    return;
+  }
+  // FIND PRODUCT ON ARRYA AND SELECT 
+  console.log("_categoriesandsubcategories", _categoriesandsubcategories);
+  _categoriesandsubcategories.forEach(categorie => {
+    categorie.subcategorias[0].productos.forEach((prod) => {
+      if (prod.id === producto_id) {
+        prod.precio_arriendo = parseInt(newRentPrice);
+      }
+    })
+  });
+
+  _selectedProducts.forEach((prod) => {
+    if (prod.id === producto_id) {
+      prod.precio_arriendo = parseInt(newRentPrice);
+    }
+  })
+  $(this).val(CLPFormatter(parseInt(newRentPrice)));
+  printAllSelectedProducts();
+  setIngresos();
+});
+
+
+
+function setSelectedProduct_RemoveProducts(prodsToRemove) {
 
   prodsToRemove.forEach((prodsToRemove) => {
     const productExists = _productos.find((producto) => {
@@ -1098,7 +1107,7 @@ function setSelectedProduct_RemoveProducts(prodsToRemove){
     // SUBSTRACT QUANTITY TO ADD TO ALL PRODS ON LIST
     // MODIFY AVAILABILITY
     _productos.forEach((producto) => {
-      if (producto.id === prodsToRemove.id){
+      if (producto.id === prodsToRemove.id) {
         producto.disponibles = producto.disponibles + parseInt(prodsToRemove.quantity);
         if (producto.disponibles < 0) {
           producto.faltantes = Math.abs(producto.disponibles);
@@ -1107,28 +1116,27 @@ function setSelectedProduct_RemoveProducts(prodsToRemove){
         }
       }
     })
-    const selectedProd = _selectedProducts.find((selectedProd)=>{
+    const selectedProd = _selectedProducts.find((selectedProd) => {
       return selectedProd.id === prodsToRemove.id
     })
-    if(selectedProd){
+    if (selectedProd) {
 
       selectedProd.quantityToAdd = parseInt(selectedProd.quantityToAdd) - parseInt(prodsToRemove.quantity);
 
-      if(selectedProd.quantityToAdd === 0){
+      if (selectedProd.quantityToAdd === 0) {
         // DELETE FROM _SELECTEDPRODUCTS IN CASE QUANTITYTOADD EQUAL TO 0 
-        _selectedProducts.splice(_selectedProducts.indexOf(selectedProd),1)
-      }else{
-
+        _selectedProducts.splice(_selectedProducts.indexOf(selectedProd), 1)
+      } else {
         selectedProd.disponibles = parseInt(selectedProd.disponibles) + parseInt(prodsToRemove.quantity);
-        if(selectedProd.disponibles > 0){
+        if (selectedProd.disponibles > 0) {
           selectedProd.faltantes = 0
-        }else{
+        } else {
           selectedProd.faltantes = Math.abs(selectedProd.disponibles)
         }
       }
     }
   })
-  console.log("_selectedProducts",_selectedProducts);
+  console.log("_selectedProducts", _selectedProducts);
   return true;
 }
 
@@ -1143,39 +1151,39 @@ async function fillProductsTable() {
 
 
 let currentRelativeCatValue = 0;
-$(document).on('click','.relativeCategorieValue',function(){
-    currentRelativeCatValue = ClpUnformatter($(this).val());
-    $(this).val("");
+$(document).on('click', '.relativeCategorieValue', function () {
+  currentRelativeCatValue = ClpUnformatter($(this).val());
+  $(this).val("");
 });
- 
-$(document).on('blur','.relativeCategorieValue',function(){
+
+$(document).on('blur', '.relativeCategorieValue', function () {
   const valor = $(this).val();
 
-  if(valor === "" || valor === undefined || valor === null){
-      $(this).val(CLPFormatter(currentRelativeCatValue));
-      return
+  if (valor === "" || valor === undefined || valor === null) {
+    $(this).val(CLPFormatter(currentRelativeCatValue));
+    return
   }
 
-  if(!isNumeric(valor)){
-      Swal.fire({
-          icon:'warning',
-          title:'Ups!',
-          text:'Debes ingresar un número',
-          showConfirmButton:false,
-          showCancelButton:false,
-          timer:2000
-      });
-      $(this).val(CLPFormatter(currentRelativeCatValue));
-      return;
+  if (!isNumeric(valor)) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Ups!',
+      text: 'Debes ingresar un número',
+      showConfirmButton: false,
+      showCancelButton: false,
+      timer: 2000
+    });
+    $(this).val(CLPFormatter(currentRelativeCatValue));
+    return;
   }
 
-  const categorie  = $(this).attr('categorie_name');
-  const categoriaTotal = totalPerItem.equipos.find((categoria)=>{
-      if(categoria.categorie === categorie){
-        categoria.value = parseInt(valor);
-        categoria.isEdited = true
-        return categoria;
-      }
+  const categorie = $(this).attr('categorie_name');
+  const categoriaTotal = totalPerItem.equipos.find((categoria) => {
+    if (categoria.categorie === categorie) {
+      categoria.value = parseInt(valor);
+      categoria.isEdited = true
+      return categoria;
+    }
   })
 
 
@@ -1199,34 +1207,34 @@ $(document).on('blur','.relativeCategorieValue',function(){
 //   $(this).closest('th').addClass('tempHidden');
 // })
 
-$(document).on('click','.hide-cu',function(){
+$(document).on('click', '.hide-cu', function () {
   console.log($(this).closest('table'))
-    console.log("ESTE ES EL; LCIK DEL OJO");
-  if($(this).closest('th').hasClass('tempHidden')){
+  console.log("ESTE ES EL; LCIK DEL OJO");
+  if ($(this).closest('th').hasClass('tempHidden')) {
     $(this).closest('th').removeClass('tempHidden');
     $(this).closest('table').find('tbody').find('.cuTd').removeClass('tempHidden')
     return;
   }
   $(this).closest('th').addClass('tempHidden');
   $(this).closest('table').find('tbody').find('.cuTd').addClass('tempHidden')
-  
-  
+
+
 })
-$(document).on('click','.hide-cant',function(){
-  
-  if($(this).closest('th').hasClass('tempHidden')){
+$(document).on('click', '.hide-cant', function () {
+
+  if ($(this).closest('th').hasClass('tempHidden')) {
     $(this).closest('th').removeClass('tempHidden');
     $(this).closest('table').find('tbody').find('.cantTd').removeClass('tempHidden')
     return;
   }
   $(this).closest('th').addClass('tempHidden');
   $(this).closest('table').find('tbody').find('.cantTd').addClass('tempHidden')
-  
-  
+
+
 })
-$(document).on('click','.hide-total',function(){
-  
-  if($(this).closest('th').hasClass('tempHidden')){
+$(document).on('click', '.hide-total', function () {
+
+  if ($(this).closest('th').hasClass('tempHidden')) {
     $(this).closest('th').removeClass('tempHidden');
     $(this).closest('table').find('tbody').find('.totalTd').removeClass('tempHidden')
     return;
@@ -1237,46 +1245,46 @@ $(document).on('click','.hide-total',function(){
 })
 
 let lastProdTotal = 0;
-$(document).on('click','.totalProdInputResume',function(){
+$(document).on('click', '.totalProdInputResume', function () {
   lastProdTotal = parseInt(ClpUnformatter($(this).val()));
-  $(this).val(""); 
+  $(this).val("");
 })
 
-$(document).on('blur','.totalProdInputResume',function(){
+$(document).on('blur', '.totalProdInputResume', function () {
   const valor = parseInt(ClpUnformatter($(this).val()));
   const product_id = $(this).closest('tr').attr('product_id');
 
-  if(valor === "" || valor === undefined || valor === null){
+  if (valor === "" || valor === undefined || valor === null) {
     $(this).val(CLPFormatter(lastProdTotal));
     return
   }
 
-  if(!isNumeric(valor)){
-      Swal.fire({
-          icon:'warning',
-          title:'Ups!',
-          text:'Debes ingresar un número',
-          showConfirmButton:false,
-          showCancelButton:false,
-          timer:2000
-      });
-      $(this).val(CLPFormatter(lastProdTotal));
-      return;
+  if (!isNumeric(valor)) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Ups!',
+      text: 'Debes ingresar un número',
+      showConfirmButton: false,
+      showCancelButton: false,
+      timer: 2000
+    });
+    $(this).val(CLPFormatter(lastProdTotal));
+    return;
   }
 
-  const prodExists = _selectedProducts.find((prod)=>{
+  const prodExists = _selectedProducts.find((prod) => {
     return prod.id === product_id;
   })
 
-  if(!prodExists){
+  if (!prodExists) {
     Swal.fire({
-      icon:'error',
-      title:'Ups!',
-      text:'Ha ocurrido un error',
-      showConfirmButton:false,
-      showCancelButton:false,
-      timer:2000
-  });
+      icon: 'error',
+      title: 'Ups!',
+      text: 'Ha ocurrido un error',
+      showConfirmButton: false,
+      showCancelButton: false,
+      timer: 2000
+    });
     return
   }
 
@@ -1284,55 +1292,63 @@ $(document).on('blur','.totalProdInputResume',function(){
   prodExists.precio_arriendo = newPrecioArriendo;
   printAllSelectedProducts();
   setIngresos();
-  $(this).val(CLPFormatter(valor)); 
-  console.log("_selectedProducts",_selectedProducts);
+  $(this).val(CLPFormatter(valor));
+  console.log("_selectedProducts", _selectedProducts);
+})
+
+let isProdQuantitySelected = false;
+let prodQuantityElementSelected = "";
+
+$(document).on('click', '.quantityProductInput', function () {
+  isProdQuantitySelected = true;
+  prodQuantityElementSelected = $(this);
 })
 
 /*
   // OTHER PRODUCTS SECTION
-*/ 
+*/
 
 let lastCantOthers = 0;
 let lastTotalOthers = 0;
 let _selectedOthersProducts = [];
 
-$('#addNewOthersRow').on('click',async function(){
+$('#addNewOthersRow').on('click', async function () {
   printAllSelectedOthers()
 })
 
 
-$(document).on('blur','.nameOthers',function(){
+$(document).on('blur', '.nameOthers', function () {
   setOtherIfReady();
 })
 
-$(document).on('click','.cantidadOthers',function(){
+$(document).on('click', '.cantidadOthers', function () {
 
-  if($(this).val() === ""){
+  if ($(this).val() === "") {
     lastCantOthers = 0;
-  }else{
+  } else {
     lastCantOthers = $(this).val();
   }
   $(this).val("");
 })
 
 
-$(document).on('blur','.cantidadOthers',function(){
+$(document).on('blur', '.cantidadOthers', function () {
 
   const valor = $(this).val();
 
-  if(valor === "" || valor === undefined || valor === null){
+  if (valor === "" || valor === undefined || valor === null) {
     $(this).val(parseInt(lastCantOthers));
     return
   }
 
-  if(!isNumeric(valor)){
+  if (!isNumeric(valor)) {
     Swal.fire({
-        icon:'warning',
-        title:'Ups!',
-        text:'Debes ingresar un número',
-        showConfirmButton:false,
-        showCancelButton:false,
-        timer:2000
+      icon: 'warning',
+      title: 'Ups!',
+      text: 'Debes ingresar un número',
+      showConfirmButton: false,
+      showCancelButton: false,
+      timer: 2000
     });
     $(this).val(parseInt(lastCantOthers));
     return;
@@ -1344,33 +1360,33 @@ $(document).on('blur','.cantidadOthers',function(){
 })
 
 
-$(document).on('click','.totalOthers',function(){
-  if($(this).val() === ""){
+$(document).on('click', '.totalOthers', function () {
+  if ($(this).val() === "") {
     lastTotalOthers = 0;
-  }else{
+  } else {
     lastTotalOthers = parseInt($(this).val());
   }
   $(this).val("");
 })
 
 
-$(document).on('blur','.totalOthers',function(){
+$(document).on('blur', '.totalOthers', function () {
 
   const valor = $(this).val();
 
-  if(valor === "" || valor === undefined || valor === null){
+  if (valor === "" || valor === undefined || valor === null) {
     $(this).val(CLPFormatter(lastTotalOthers));
     return
   }
 
-  if(!isNumeric(valor)){
+  if (!isNumeric(valor)) {
     Swal.fire({
-        icon:'warning',
-        title:'Ups!',
-        text:'Debes ingresar un número',
-        showConfirmButton:false,
-        showCancelButton:false,
-        timer:2000
+      icon: 'warning',
+      title: 'Ups!',
+      text: 'Debes ingresar un número',
+      showConfirmButton: false,
+      showCancelButton: false,
+      timer: 2000
     });
     $(this).val(CLPFormatter(lastTotalOthers));
     return;
@@ -1383,12 +1399,12 @@ $(document).on('blur','.totalOthers',function(){
 
 
 
-function printAllSelectedOthers(){
+function printAllSelectedOthers() {
 
   $('#others-table tbody tr').remove();
 
-  _selectedOthersProducts.forEach((other)=>{
-    let tr=`<tr>
+  _selectedOthersProducts.forEach((other) => {
+    let tr = `<tr>
       <td><input type="text" class="nameOthers" value="${other.nombre}"></td>
       <td class="cantTd"><input type="text" class="cantidadOthers" value="${other.cantidad}"></td>
       <td class="totalTd"><input type="text" class="totalOthers" value="${other.total}"></td>
@@ -1397,7 +1413,7 @@ function printAllSelectedOthers(){
     $('#others-table tbody').append(tr)
   });
 
-  let tr=`<tr class="notCompletedSubArriendo">
+  let tr = `<tr class="notCompletedSubArriendo">
     <td><input type="text" class="nameOthers" value=""></td>
     <td class="cantTd"><input type="number" class="cantidadOthers" value=""></td>
     <td class="totalTd"><input type="text" class="totalOthers" value=""></td>
@@ -1405,9 +1421,9 @@ function printAllSelectedOthers(){
   $('#others-table tbody').append(tr)
 
   tippy('.notCompletedSubArriendo', {
-    content:'<strong>Debes completar todos los campos para poder agregar otros equipos  al venta</strong>',
+    content: '<strong>Debes completar todos los campos para poder agregar otros equipos  al venta</strong>',
     animation: 'perspective'
-});
+  });
 }
 
 
@@ -1415,10 +1431,10 @@ function printAllSelectedOthers(){
 function setOtherIfReady() {
   _selectedOthersProducts = [];
   $('#others-table tbody tr').each((key, element) => {
-      console.log("ELEMENT", element);
+    console.log("ELEMENT", element);
     if ($(element).find('.nameOthers').val() &&
       $(element).find('.cantidadOthers').val() &&
-      $(element).find('.totalOthers').val()){
+      $(element).find('.totalOthers').val()) {
 
       $(element).removeClass('notCompletedSubArriendo');
       $(element).addClass('isCompletedSubArriendo');
@@ -1428,7 +1444,7 @@ function setOtherIfReady() {
         'cantidad': parseInt(ClpUnformatter($(element).find('.cantidadOthers').val())),
         'total': parseInt(ClpUnformatter($(element).find('.totalOthers').val()))
       });
-    }else{
+    } else {
       $(element).addClass('notCompletedSubArriendo');
     }
   });
@@ -1439,7 +1455,7 @@ function setOtherIfReady() {
 
 /*
   // END OTHER PRODUCTS SECTION
-*/ 
+*/
 
 
 
