@@ -921,64 +921,6 @@ async function addPackageToEvent(package_id){
     addPackageToPackageAssigment();
 }
 
-let currentProductRentValue = 0;
-$(document).on('click', '.product-price', async function() {
-    currentProductRentValue =ClpUnformatter($(this).val());
-    console.log("ESTE ES EL VALOR ANTERIOR DE LA CASILLA",currentProductRentValue);
-    $(this).val("");
-})
-
-$(document).on('blur', '.product-price', async function(){
-
-    const newRentPrice = ClpUnformatter($(this).val()); 
-    if(newRentPrice === "" ||newRentPrice === null || newRentPrice === undefined){
-        $(this).val(CLPFormatter(parseInt(currentProductRentValue)))
-        return;
-    }
-
-    if(!isNumeric(newRentPrice) ){
-        Swal.fire(
-            'Ups!',
-            'ingrese un valor',
-            'warning'
-        );
-
-        $(this).val(CLPFormatter(parseInt(currentProductRentValue)))
-        // $(this).val();
-        return;
-    }
-    // GET PRODUCT ID FROM DOM 
-    const producto_id = $(this).closest('tr').attr('product_id');
-    // CHECK IF ATTR EXISTS ON PRODUCTS ARRAY
-    const prodExists = listProductArray.find((prod)=>{
-        if(prod.id === producto_id){
-            return true;
-        }
-    })
-    // RETURN IF ATTR IS MODIFICATED BY USER ON DOM
-    if(!prodExists){
-        Swal.fire('Ups!', 'Ha ocurrido un error', 'error');
-        return;
-    }
-    // FIND PRODUCT ON ARRYA AND SELECT 
-    selectedProdsAndCategories.forEach(categorie => {
-        categorie.subcategorias[0].productos.forEach((prod)=>{
-            if(prod.id === producto_id){
-                prod.precio_arriendo = parseInt(newRentPrice);
-            }
-        })
-    });
-
-    selectedProds.forEach((prod)=>{
-        if(prod.id === producto_id){
-            prod.precio_arriendo = parseInt(newRentPrice);
-        }
-    })
-
-    $(this).val(CLPFormatter(parseInt(newRentPrice)));
-
-    setIngresos();
-});
 
 
 $(document).on('click', '.removePackageFromAssigment', async function () {

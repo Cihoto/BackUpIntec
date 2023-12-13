@@ -13,7 +13,7 @@
                 </table>
             </div>
             <div id="itemList">
-                <table id="tableProducts">
+                <table id="tableProducts" >
                     <thead>
                         <th>Categoría</th>
                         <th>Sub Categoría</th>

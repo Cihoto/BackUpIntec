@@ -65,7 +65,6 @@ async function SaveOrUpdateEvent() {
 
   if (projectDates.project_id === "") {
     const RESPONSE_CREATE_EVENT = await createNewEvent(requestProject);
-
     if (RESPONSE_CREATE_EVENT.id_project) {
       event_data.event_id = RESPONSE_CREATE_EVENT.id_project;
       projectDates.project_id = RESPONSE_CREATE_EVENT.id_project;
@@ -123,7 +122,7 @@ async function SaveOrUpdateEvent() {
     console.log("packagesAssigment",packagesAssigment);
   }
   
-  // SAVE ALL SELECTED VEHICLES
+  // SAVE ALL SELECTED PERSONAL
   const requestPersonal = allSelectedPersonal.map((personal) => {
     return {
       'idProject': event_data.event_id,

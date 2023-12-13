@@ -19,7 +19,6 @@ function FillRegiones(empresaId){
 
 }
 function FillDirecciones(){
-
   $.ajax({
     type: "POST",
     url: "ws/direccion/Direccion.php",
@@ -29,9 +28,7 @@ function FillDirecciones(){
       request: ""
     }),
     success: function(response) {
-
       console.log("DIRECCIONES",response.direcciones);
-
       $('#dirSelect').empty();
       $('#dirSelect').append(new Option("", ""));
       response.direcciones.forEach(dir => {

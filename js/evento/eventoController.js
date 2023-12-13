@@ -12,7 +12,7 @@ let projectDates = {
 }
 
 //BOTON DE TEST
-$('#verarray').on('click', async function() {
+$('#verarray').on('click', async function(){
   // localStorage.clear();
   // console.log("asdjhasd,jahkdsjhasd");
   // $('#arriendosModal').modal('show');
@@ -21,12 +21,9 @@ $('#verarray').on('click', async function() {
   // setIngresos();                                                             
 })
 //FIN BOTON TEST
-
 $('#inputProjectName').on('change', function() {
   $('#projectNameResume').text($(this).val());
-  
 })
-
 
 $('#fechaInicio').on('change', async function() {
 

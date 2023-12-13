@@ -174,7 +174,7 @@ body{
   }
 
   .addProdInput{
-    max-width: 50px;
+    max-width: 150px;
   }
 
 
@@ -196,7 +196,7 @@ body{
     min-height: 350px;
   }
 
-  #tableDrop td{
+  /* #tableDrop td{
     height: auto;
     border: 1px solid black;
     margin: 3px;
@@ -205,11 +205,10 @@ body{
     text-align: center;
     line-height: auto;
     cursor: pointer;
-  }
+  } */
 
-  #selectableProducts{
-   margin:1px solid red;
-  }
+
+
 
 
   #tbodyReceive{
@@ -502,13 +501,8 @@ body{
 }
 
 
-#tableProducts_wrapper > .productName{
-  min-width: 25% !important;
-}
 
-table.dataTable tbody td .productName {
-  padding: 8px 10px;
-}
+
 
 .err{
   border:1px solid red;
@@ -2597,6 +2591,78 @@ table.dataTable tbody td .productName {
   border: none;
   background-color: #FCFCFC;
 }
+
+
+  /* resume-table s-table */
+#tableProducts tbody tr:hover{
+  border: 1px solid var(--Secondary-color, #6136AB);
+  background: var(--Purple-200, #DCD0F1);
+}
+#tableProducts thead tr{
+  display: flex;
+  padding: var(--none, 0px);
+  align-items: center;
+  gap: var(--1, 8px);
+  border-radius: var(--none, 0px);
+  border: 1px solid var(--Line-table, #DDDDE1);
+  background: var(--Fondo-cyan, #E8F3F3);
+  width: 100%;
+}
+
+
+#tableProducts tbody tr{
+  display: flex;
+  padding: var(--none, 0px);
+  align-items: center;
+  gap: var(--1, 8px);
+  border-radius: var(--none, 0px);
+  border-right: 1px solid var(--Line-table, #DDDDE1);
+  border-bottom: 1px solid var(--Line-table, #DDDDE1);
+  border-left: 1px solid var(--Line-table, #DDDDE1);
+  cursor: pointer;
+
+}
+
+#tableProducts thead th{
+  display: flex;
+  padding: 16px;
+  align-items: center;
+  justify-content: start;
+  flex-shrink: 0;
+  border-right: 1px solid var(--Line-table, #DDDDE1);
+  background: rgba(0, 0, 0, 0.00);
+  width:13.97% !important;
+}
+#tableProducts tbody td{
+  display: flex;
+  padding: 8px 16px;
+  align-items: flex-end;
+  gap: var(--none, 8px);
+  flex-shrink: 0;
+  justify-content: start;
+  border-right: 1px solid var(--Line-table, #DDDDE1);
+  background: rgba(0, 0, 0, 0.00);
+  width:13.97% !important;
+}
+
+.quantityProductInput{
+  border-radius: 10px;
+  width: 200pxpx;
+  border: 1px solid rgba(0, 0, 0, 0.356);
+  padding: 3px;
+}
+.addItem{
+  line-height: 30px !important;
+}
+#tableProducts{
+
+}
+/* #tableProducts{
+
+}
+#tableProducts{
+
+} */
 
 .s-table thead tr{
   display: flex;

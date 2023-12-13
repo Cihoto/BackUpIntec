@@ -234,11 +234,21 @@ $('.createOrContinue').on('click',function(){
     SaveOrUpdateEvent();
 });
 
-$(document).keydown(function(event) {
-    if (event.which === 13) {
+$(document).keydown(function(event){
+    if (event.which === 13 ){
         event.preventDefault();
-        alert('Enter key is pressed!');
+
+        console.log("isProdQuantitySelected",isProdQuantitySelected);
+        console.log("prodQuantityElementSelected",prodQuantityElementSelected);
+
+        if(isProdQuantitySelected === true){
+            
+            $(prodQuantityElementSelected).closest('td').find('.addItem').trigger('click');
+            // $(prodQuantityElementSelected).trigger('click');
+        }
     }
+
+
 });
 
 </script>
