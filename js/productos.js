@@ -476,6 +476,10 @@ $(document).on('blur', '.addProdInputResume', async function () {
   //     });
 
 
+
+  
+
+
   //     return
   //   } else {
   //     const quantityAddStock = parseInt(lastValue) - parseInt(currentValue);
