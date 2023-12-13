@@ -6,6 +6,10 @@ $active = 'administracion';
 ?>
 
 <body>
+
+
+
+
     <?php include_once('./includes/Constantes/empresaId.php') ?>
     <?php include_once('./includes/Constantes/rol.php') ?>
     <script src="./assets/js/initTheme.js"></script>
