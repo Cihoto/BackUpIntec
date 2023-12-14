@@ -15,7 +15,7 @@
             <div id="itemList">
                 <table id="tableProducts" >
                     <thead>
-                        <th>ALKSDJALKSDJLAKSDJ</th>
+                        <th>Categoría</th>
                         <th>Sub Categoría</th>
                         <th class="itemProd">Nombre</th>
                         <th>Cantidad</th>
